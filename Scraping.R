@@ -1,3 +1,12 @@
+#' 
+#' The Best Mov(ie) Bot
+#' By Anushka, Stanton, Vance
+#' 11 July 2016
+#' 
+#' DESCRIPTION: Source code for a twitter bot that analyzes tweets of new movies
+#' for sentiment and tweets out the movie with the highest percentage
+#' of positive senitment. Sentiment analysis is done with Sentiment140.
+#'
 library(rvest)
 library(dplyr)
 library(reshape2)
@@ -7,13 +16,14 @@ library(tm)
 library(twitteR)
 library(jsonlite)
 library(plyr)
+library(sentiment)
 devtools::install_git("https://github.com/okugami79/sentiment140")
 
 # Set up API
-consumer_key = "IPMipNDF3FRq7TTPAYbwBEJrM"
-consumer_secret = "teFpixr4CvaEgzA1C1o8WxohK3AjEpjqxsSfx5InHhUeideLRC"
-access_token = "750634029016346624-rvNoVvVtdljMQLkWictiS8EhGH6Yp9o"
-access_secret = "Kgc2sDP2c1oDDowxxdlmSmbv7VZGJV2lw2I1G8rPwlR85"
+consumer_key = "xxxxxxxxxxxxx"
+consumer_secret = "xxxxxxxxxxxx"
+access_token = "xxxxxxxxxxxx"
+access_secret = "xxxxxxxxxxxx"
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 
 # Scrape top 10 movies from Fandango and clean the data
@@ -24,8 +34,7 @@ a <- str_replace_all(tops, "[/[:space:]]", "")
 a <- str_replace_all(a, "\\:.*", "")
 a <- str_replace_all(a, "[0-9]+", "")
 
-# Add hashtag to the top ten movies and turn into list
-# str_c("#", a, sep = "")
+# Turn into list and clean up tweets
 x = list()
 
 for(movie in a) {
