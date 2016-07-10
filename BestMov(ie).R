@@ -1,4 +1,3 @@
-#' 
 #' Title: The Best Mov(ie) Bot
 #' Authors: Anushka Makhija, Stanton Leavitt, Vance Matthews
 #' Date: 11 July 2016
