@@ -1,32 +1,28 @@
 #' 
-#' The Best Mov(ie) Bot
-#' By Anushka Makhija, Stanton Leavitt, Vance Matthews
-#' 11 July 2016
+#' Title: The Best Mov(ie) Bot
+#' Authors: Anushka Makhija, Stanton Leavitt, Vance Matthews
+#' Date: 11 July 2016
 #' 
 #' DESCRIPTION: Source code for a twitter bot that analyzes tweets of new movies
 #' for sentiment and tweets out the movie with the highest percentage
 #' of positive senitment. Sentiment analysis is done with Sentiment140.
-#'
 
 library(rvest)
-library(plyr)
-library(dplyr)
-library(reshape2)
-library(ggplot2)
 library(stringr)
 library(tm)
 library(twitteR)
 devtools::install_git("https://github.com/okugami79/sentiment140")
 library(sentiment)
 
-# Set up API
-consumer_key = "IPMipNDF3FRq7TTPAYbwBEJrM"
-consumer_secret = "teFpixr4CvaEgzA1C1o8WxohK3AjEpjqxsSfx5InHhUeideLRC"
-access_token = "750634029016346624-rvNoVvVtdljMQLkWictiS8EhGH6Yp9o"
-access_secret = "Kgc2sDP2c1oDDowxxdlmSmbv7VZGJV2lw2I1G8rPwlR85"
+# Set up API - insert API access code here
+consumer_key = "*************************"
+consumer_secret = "**************************************************"
+access_token = "**************************************************"
+access_secret = "*********************************************"
+
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 
-# Scrape top 10 movies from Fandango and clean the data
+# Scrape the top 10 movies from Fandango and clean the data
 fandango <- read_html("http://www.fandango.com/boxoffice") %>% html_nodes("table") %>% .[[1]] %>% html_table(trim = TRUE)
 names(fandango) <- str_replace_all(names(fandango), "[/[:space:]]", "")
 tops <- head(fandango[fandango$WeeksReleased < 4, 2], n = 7L)
@@ -46,7 +42,7 @@ for(movie in a) {
   reps <- c(reps, length(y))
 }
 
-# Create new data frame for movie tweet count (for if API cannot return enough tweets)
+# Create new data frame for movie tweet count (in case API cannot return enough tweets)
 newdf <- data.frame(moviename = a,
                     moviecount = reps)
 
@@ -59,12 +55,12 @@ twitter.text = gsub("[^[:space:]]*…$", "", twitter.text)
 twitter.sentiment <- sentiment(twitter.text)
 twitter.sentiment$moviename <- names
 
-# Group the tweets by the number of positive tweets for each movie
+# Vector of the number of positive tweets per movie
 x2 <- numeric()
 for(movie in a) {
   x2 <- c(x2, nrow(subset(subset(twitter.sentiment, moviename == movie), polarity == "positive")))
 }
-
+# Vector of the number of total tweets per movie
 x3 <- numeric()
 for(movie in a) {
   x3 <- c(x3, nrow(subset(twitter.sentiment, moviename == movie)))
@@ -93,7 +89,6 @@ tweets <- c("Results are in! This week's top movies:",
             "#replytweet Are these the week's best films?")
 
 
-# Tweet out the most positive movie
+# Tweet out the top 3 most positive movies
 string <- as.String(c(sample(tweets, 1), paste("1.", topthree[1]), paste("2.", topthree[2]), paste("3.", topthree[3])))
-# string
 tweet(string)
