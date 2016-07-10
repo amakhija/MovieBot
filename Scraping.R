@@ -17,9 +17,9 @@ access_secret = "Kgc2sDP2c1oDDowxxdlmSmbv7VZGJV2lw2I1G8rPwlR85"
 setup_twitter_oauth(consumer_key, consumer_secret, access_token, access_secret)
 
 # Scrape top 10 movies from Fandango and clean the data
-imdb <- read_html("http://www.fandango.com/boxoffice") %>% html_nodes("table") %>% .[[1]] %>% html_table(trim = TRUE)
-names(imdb) <- str_replace_all(names(imdb), "[/[:space:]]", "")
-tops <- head(imdb[imdb$WeeksReleased < 4, 2], n = 7L)
+fandango <- read_html("http://www.fandango.com/boxoffice") %>% html_nodes("table") %>% .[[1]] %>% html_table(trim = TRUE)
+names(fandango) <- str_replace_all(names(fandango), "[/[:space:]]", "")
+tops <- head(fandango[fandango$WeeksReleased < 4, 2], n = 7L)
 a <- str_replace_all(tops, "[/[:space:]]", "")
 a <- str_replace_all(a, "\\:.*", "")
 a <- str_replace_all(a, "[0-9]+", "")
@@ -59,6 +59,17 @@ finalcount <- finalcount[order(finalcount$sentiment.count, decreasing = TRUE),]
 # Get the names for the top three movies and store them in a vector
 topthree <- as.character(head(finalcount, n = 3L)$Movie.Name)
 
+# List of phrases to tweet out:
+tweets <- c("Results are in! This week's top movies:",
+            "Wondering what movie to see this week? Pick between:",
+            "Tell us if we're right! Are these the week's best movies?",
+            "Don't miss out on this week's best movies:",
+            "Tired of work and need a movie break? Check out:",
+            "Are these the best movies of the week? Go watch and let us know:",
+            "#replytweet Are these the week's best films?")
+
+
 # Tweet out the most positive movie
-string <- cat("The top three movies for this week are:\n1. ", topthree[1], "\n2. ", topthree[2], "\n3. ", topthree[3])
-print(string)
+string <- as.String(c(sample(tweets, 1), paste("1.", topthree[1]), paste("2.", topthree[2]), paste("3.", topthree[3])))
+# string
+tweet(string)
